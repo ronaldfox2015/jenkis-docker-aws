@@ -13,6 +13,7 @@ install-library:
 	docker run -it $(TAG_DEV) $(COMMAND)
 
 start:
+	sudo chmod 777 -R jenkins-data
 	docker run -it --rm  -u root -p 8080:8080 -v $(AWS_CREDENTIALS) -v $(PWD)/jenkins-data:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock $(TAG_DEV)
 
 ssh-jenkins:

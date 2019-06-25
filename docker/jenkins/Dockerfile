@@ -1,20 +1,17 @@
-FROM jenkinsci/blueocean
+FROM jenkins/jenkins:lts
 
 USER root
+RUN apt-get update \
+      && apt-get install -y sudo make python libltdl7
+      # \
+      #&& rm -rf /var/lib/apt/lists/*
 
-RUN apk add --update make
+RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
+  && python get-pip.py && rm get-pip.py
 
-RUN cat /etc/issue
+RUN pip install --upgrade awscli
+RUN echo "jenkins ALL=NOPASSWD: ALL" >> /etc/sudoers
+USER jenkins
+COPY plugins.txt /usr/share/jenkins/plugins.txt
+RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/plugins.txt
 
-RUN apk add --update py-pip
-
-RUN pip install awscli 
-
-
-RUN pip install awscli --upgrade --user
-
-ENV APP_DIR=/app
-
-RUN mkdir $APP_DIR
-
-WORKDIR $APP_DIR
